@@ -1,41 +1,44 @@
-# Prerequisites
-*.d
+# Build directories
+build/
+cmake-build-*/
 
-# Compiled Object files
+# IDE state
+.idea/
+.vscode/
+.DS_Store
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Compiled object / library files
+*.d
 *.slo
 *.lo
 *.o
 *.obj
-
-# Precompiled Headers
 *.gch
 *.pch
-
-# Linker files
 *.ilk
-
-# Debugger Files
 *.pdb
-
-# Compiled Dynamic libraries
 *.so
 *.dylib
 *.dll
-
-# Fortran module files
 *.mod
 *.smod
-
-# Compiled Static libraries
 *.lai
 *.la
 *.a
 *.lib
-
-# Executables
 *.exe
 *.out
 *.app
-
-# debug information files
 *.dwo
+
+# Benchmark / per-trial run outputs (regenerable; user re-runs the MC)
+results/benchmark_intel/data/
+results/benchmark_intel/runs/
+results/benchmark_cityTrees/data/
+results/benchmark_cityTrees/runs/
+results/*/data/
+results/*/runs/
