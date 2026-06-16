@@ -12,6 +12,8 @@ add_library(${PROJECT_NAME} SHARED ${EX_SRCS} ${EX_HEADERS} ${ROBUST_HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/robust>
+    ${SPQR_INCLUDES}
+    ${CHOLMOD_INCLUDES}
 )
 
 # --- Linking ---
@@ -21,11 +23,11 @@ target_link_libraries(${PROJECT_NAME}
         Optimization
         ILDL
         gflags
-        glog
+        glog::glog
         ${BLAS_LIBRARIES}
         ${SPQR_LIBRARIES}
-        ${LAPACK}
-        cholmod
+        ${LAPACK_LIBRARIES}
+        ${CHOLMOD_LIBRARIES}
 )
 
 # --- Unit Tests ---

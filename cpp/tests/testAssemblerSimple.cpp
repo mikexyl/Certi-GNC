@@ -7,7 +7,9 @@
 
 #include <gtsam/base/Vector.h>
 #include <gtsam/base/Matrix.h>
-#include <gtsam/nonlinear/NoiseModelFactorN.h>
+#include <gtsam/base/make_shared.h>
+#include <gtsam/nonlinear/NonlinearFactor.h>
+#include <boost/optional/optional.hpp>
 #include "../utils.h"
 #include <gtest/gtest.h>
 #include <gtsam/inference/Symbol.h>
@@ -30,7 +32,8 @@ public:
         : NoiseModelFactor2<Vector, Vector>(noiseModel::Unit::Create(1), k1, k2), w_(w) {}
 
     Vector evaluateError(const Vector& x1, const Vector& x2,
-                         OptionalMatrixType H1, OptionalMatrixType H2) const override {
+                         boost::optional<Matrix&> H1,
+                         boost::optional<Matrix&> H2) const override {
         if (H1) *H1 = Matrix::Identity(x1.size(), x1.size());
         if (H2) *H2 = -Matrix::Identity(x2.size(), x2.size());
         return x1 - x2;
@@ -52,7 +55,7 @@ TEST(DataMatrixAssembler, SimpleManualVerification) {
     Key x1 = Symbol('L', 1);
     Key x2 = Symbol('L', 2);
     double w = 5.0;
-    graph.add(std::make_shared<SimpleDistanceFactor>(x1, x2, w));
+    graph.add(gtsam::make_shared<SimpleDistanceFactor>(x1, x2, w));
 
     // 2. Define ordering and layout
     Ordering ordering;

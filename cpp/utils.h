@@ -62,6 +62,7 @@ typedef Eigen::SparseMatrix<Scalar, Eigen::RowMajor> SparseMatrix;
 #include <gtsam/nonlinear/NonlinearFactorGraph.h>
 #include <gtsam/inference/Symbol.h>
 #include <gtsam/inference/Ordering.h>
+#include <boost/pointer_cast.hpp>
 namespace gtsam {
 
     /**
@@ -278,7 +279,7 @@ namespace gtsam {
             if (totalDim == 0) return SparseMatrix(0, 0);
 
             for (const auto& factor : graph) {
-                if (auto eFactor = std::dynamic_pointer_cast<EuclideanFactor>(factor)) {
+                if (auto eFactor = boost::dynamic_pointer_cast<EuclideanFactor>(factor)) {
                     EuclideanHessianBlock block = eFactor->computeEuclideanHessian();
                     ProcessBlock(block, layout, triplets);
                 }

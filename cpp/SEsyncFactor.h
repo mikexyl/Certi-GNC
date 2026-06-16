@@ -29,11 +29,13 @@
 
 #include <gtsam/geometry/Rot2.h>
 #include <gtsam/geometry/Rot3.h>
+#include <gtsam/base/make_shared.h>
 #include <gtsam/nonlinear/NonlinearFactor.h>
-#include <gtsam/nonlinear/NoiseModelFactorN.h>
 #include <gtsam/inference/Symbol.h>
 #include "LiftedPose.h"
 #include <Eigen/Sparse>
+#include <boost/optional/optional.hpp>
+#include <boost/pointer_cast.hpp>
 #include <type_traits>
 namespace gtsam {
 
@@ -88,8 +90,7 @@ namespace gtsam {
          * with no clone() implemented").
          */
         gtsam::NonlinearFactor::shared_ptr clone() const override {
-            return std::static_pointer_cast<gtsam::NonlinearFactor>(
-                std::make_shared<SEsyncFactor<d>>(*this));
+            return gtsam::make_shared<SEsyncFactor<d>>(*this);
         }
 
         /// @}
@@ -151,7 +152,9 @@ namespace gtsam {
          *
          * @throws std::invalid_argument if the row dimensions of Y1 or Y2 do not match p_.
          */
-        Vector evaluateError(const LiftedPoseDP& P1, const LiftedPoseDP& P2, OptionalMatrixType H1, OptionalMatrixType H2) const override;
+        Vector evaluateError(const LiftedPoseDP& P1, const LiftedPoseDP& P2,
+                             boost::optional<Matrix&> H1,
+                             boost::optional<Matrix&> H2) const override;
 
         /// @}
 
@@ -173,8 +176,8 @@ namespace gtsam {
          *                is resized to ((p_*d_ + p_) × (Dim(Y2) + p_)) and populated.
          */
         void fillJacobians(const LiftedPoseDP &P1, const LiftedPoseDP &P2,
-                           OptionalMatrixType H1,
-                           OptionalMatrixType H2) const;
+                           boost::optional<Matrix&> H1,
+                           boost::optional<Matrix&> H2) const;
 
         /**
          * @brief Compute the Euclidean Hessian block in a structured format.
@@ -205,7 +208,7 @@ namespace gtsam {
             triplets.reserve(measurement_stride);
             size_t i = gtsam::symbolIndex(this->key1());
             size_t j = gtsam::symbolIndex(this->key2());
-            auto diag   = std::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
+            auto diag   = boost::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
             if (!diag) {
                 throw std::runtime_error("Expected a Diagonal noise model");
             }
@@ -262,7 +265,7 @@ namespace gtsam {
             size_t i = gtsam::symbolIndex(this->key1());
             size_t j = gtsam::symbolIndex(this->key2());
 
-            auto diag = std::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
+            auto diag = boost::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
             if (!diag) {
                 throw std::runtime_error("Expected a Diagonal noise model");
             }
@@ -305,7 +308,7 @@ namespace gtsam {
             size_t i = gtsam::symbolIndex(this->key1());
             size_t j = gtsam::symbolIndex(this->key2());
 
-            auto diag = std::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
+            auto diag = boost::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
             if (!diag) {
                 throw std::runtime_error("Expected a Diagonal noise model");
             }
@@ -344,7 +347,7 @@ namespace gtsam {
             size_t i = gtsam::symbolIndex(this->key1());
             size_t j = gtsam::symbolIndex(this->key2());
 
-            auto diag = std::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
+            auto diag = boost::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
             if (!diag) {
                 throw std::runtime_error("Expected a Diagonal noise model");
             }
@@ -381,7 +384,7 @@ namespace gtsam {
             triplets.reserve(measurement_stride);
             size_t i = gtsam::symbolIndex(this->key1());
 
-            auto diag = std::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
+            auto diag = boost::dynamic_pointer_cast<noiseModel::Diagonal>(this->noiseModel());
             if (!diag) {
                 throw std::runtime_error("Expected a Diagonal noise model");
             }

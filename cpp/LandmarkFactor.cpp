@@ -104,8 +104,8 @@ namespace gtsam
     template <size_t d>
     void LiftedLandmarkFactor<d>::fillJacobians(const LiftedPoseDP &Q1,
                                                 const Vector &L1,
-                                                OptionalMatrixType H1,
-                                                OptionalMatrixType H2) const
+                                                boost::optional<Matrix&> H1,
+                                                boost::optional<Matrix&> H2) const
     {
         const StiefelManifoldKP Y1 = Q1.get_Y();    // rotation part
         const Vector t1 = Q1.get_t();              // translation from pose
@@ -152,8 +152,8 @@ namespace gtsam
     template <size_t d>
     Vector LiftedLandmarkFactor<d>::evaluateError(const LiftedPoseDP &Q1,
                                                   const Vector &L1,
-                                                  OptionalMatrixType H1,
-                                                  OptionalMatrixType H2) const
+                                                  boost::optional<Matrix&> H1,
+                                                  boost::optional<Matrix&> H2) const
     {
         const StiefelManifoldKP Y1 = Q1.get_Y();
         // translation error: measured minus predicted
@@ -204,5 +204,4 @@ namespace gtsam
     template class LiftedLandmarkFactor<3>;
 
 } // namespace gtsam
-
 

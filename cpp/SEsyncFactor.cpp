@@ -128,8 +128,8 @@ namespace gtsam {
      *                is resized to ((p_*d_ + p_) × (Dim(Y2) + p_)) and populated.
      */
     void SEsyncFactor<d>::fillJacobians(const LiftedPoseDP &Q1, const LiftedPoseDP &Q2,
-                                    OptionalMatrixType H1,
-                                    OptionalMatrixType H2) const {
+                                    boost::optional<Matrix&> H1,
+                                    boost::optional<Matrix&> H2) const {
         const StiefelManifoldKP Y1 = Q1.get_Y();
         const StiefelManifoldKP Y2 = Q2.get_Y();
         const Vector t1 = Q1.get_t();
@@ -202,8 +202,8 @@ namespace gtsam {
      * @throws std::invalid_argument if the row dimensions of Y1 or Y2 do not match p_.
      */
     Vector SEsyncFactor<d>::evaluateError(const LiftedPoseDP &Q1, const LiftedPoseDP &Q2,
-                                      OptionalMatrixType H1,
-                                      OptionalMatrixType H2) const {
+                                      boost::optional<Matrix&> H1,
+                                      boost::optional<Matrix&> H2) const {
 
         const StiefelManifoldKP Y1 = Q1.get_Y();
         const StiefelManifoldKP Y2 = Q2.get_Y();

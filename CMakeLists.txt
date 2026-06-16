@@ -31,10 +31,13 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/bin" CACHE PATH "Directo
 
 # --- DEPENDENCIES ---
 
-# BLAS & SuiteSparse
+# BLAS, LAPACK & SuiteSparse
 find_package(BLAS REQUIRED)
-# Prioritize system SuiteSparse to avoid conflicts with Anaconda
-include_directories(SYSTEM /usr/include/suitesparse)
+find_package(LAPACK REQUIRED)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Preconditioners/cmake")
+find_package(SPQR REQUIRED)
+find_package(CHOLMOD REQUIRED)
+include_directories(SYSTEM ${SPQR_INCLUDES} ${CHOLMOD_INCLUDES})
 
 # Eigen3
 find_package(Eigen3 3.3.7 REQUIRED)

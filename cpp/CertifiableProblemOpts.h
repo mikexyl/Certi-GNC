@@ -26,6 +26,8 @@
 #define CERTIFIABLEPROBLEMOPTS_H
 #include "Certifiable_problem.h"
 
+#include <random>
+
 namespace gtsam
 {
     /**

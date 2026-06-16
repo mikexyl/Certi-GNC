@@ -50,9 +50,10 @@
 #include "../CertifiableLandmark.h"
 
 #include <gtsam/nonlinear/NonlinearFactorGraph.h>
-#include <gtsam/nonlinear/internal/ChiSquaredInverse.h>
 
 #include <algorithm>
+#include <boost/math/distributions/chi_squared.hpp>
+#include <boost/pointer_cast.hpp>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -67,7 +68,7 @@ namespace gtsam {
 
 /// chi^2 inverse CDF: same semantics as MATLAB chi2inv.
 inline double Certifiable_Chi2inv(const double alpha, const size_t dofs) {
-    return internal::chi_squared_quantile(dofs, alpha);
+    return boost::math::quantile(boost::math::chi_squared(static_cast<double>(dofs)), alpha);
 }
 
 template <class CertifiableGncParamsT>
@@ -417,8 +418,12 @@ public:
         g.resize(nfg_.size());
         for (size_t i = 0; i < nfg_.size(); ++i) {
             if (!nfg_[i]) continue;
-            auto factor = nfg_.at<NoiseModelFactor>(i);
-            auto nm = std::dynamic_pointer_cast<noiseModel::Gaussian>(factor->noiseModel());
+            auto factor = boost::dynamic_pointer_cast<NoiseModelFactor>(nfg_.at(i));
+            if (!factor) {
+                throw std::runtime_error(
+                    "CertifiableGncOptimizer::makeWeightedGraph: non-noise-model factor.");
+            }
+            auto nm = boost::dynamic_pointer_cast<noiseModel::Gaussian>(factor->noiseModel());
             if (!nm) {
                 throw std::runtime_error(
                     "CertifiableGncOptimizer::makeWeightedGraph: non-Gaussian noise model.");
